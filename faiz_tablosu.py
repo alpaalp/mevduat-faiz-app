@@ -11,12 +11,12 @@ def get_faiz_tablosu():
     soup = BeautifulSoup(resp.content, "lxml")
     texts = [n.get_text(strip=True) for n in soup.select(".text-center")]
 
-    # R indices [4,6,8] → Python 0-based [3,5,7]
+
     odea_vals_4_6_8 = [texts[i] for i in (3,5,7) if i < len(texts)]
     odea_nums_32_91 = [float(v.replace("%","").replace(",", ".")) for v in odea_vals_4_6_8]
     odea_32_91_max = max(odea_nums_32_91) if odea_nums_32_91 else None
 
-    # R index [10] → Python index 9
+    
     odea_92_max = None
     if len(texts) > 9:
         try:
@@ -209,7 +209,7 @@ def get_faiz_tablosu():
             None, None, None
         ],
         "günlük faiz": [
-            odea_nums_32_91, # replace with actual daily values if desired
+            odea_nums_32_91, 
             fiba_gunluk_faiz, alternatif_gunluk_faiz, qnb_vals,
             burgan_gunluk_faiz, akbank_gunluk_faiz, None, None,
             isbankasi_gunluk_faiz, vakifbank_gunluk_faiz,
