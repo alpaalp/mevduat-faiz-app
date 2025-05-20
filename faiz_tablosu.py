@@ -91,9 +91,9 @@ def scrape_fibabanka():
         
         fiba_data = tables[1]
         fiba_32_91 = fiba_data.iloc[2].iloc[1:].astype(str).str.replace(",",".").astype(float)
-        fiba_32_91_max = fiba_32_91.max()
+        fiba_32_91_max = fiba_32_91.max() / 100
         fiba_92 = fiba_data.iloc[3].iloc[1:].astype(str).str.replace(",",".").astype(float)
-        fiba_92_max = fiba_92.max()
+        fiba_92_max = fiba_92.max() / 100
         
         fiba_daily_data = tables[0]
         fiba_daily = fiba_daily_data.iloc[0:8,5].astype(str).str.replace("%","").str.replace(",",".").astype(float).max()
