@@ -89,7 +89,7 @@ def scrape_qnb():
         soup = BeautifulSoup(requests.get("https://www.qnb.com.tr/e-vadeli-mevduat-urunleri").content, "lxml")
         rate = clean_number(re.findall(r"%\d+[,\.]?\d*", soup.select_one("#sbt1").text)[0])
         daily_tables = pd.read_html("https://www.qnb.com.tr/kazandiran-gunluk-hesap")
-        d_val = safe_max([clean_number(str(x)) for x in daily_tables[0].iloc[1:3,4]])
+        d_val = safe_max([clean_number(str(x)) for x in daily_tables[1].iloc[0:3,4]])
         return rate, rate, d_val
     except:
         return None, None, None
