@@ -257,7 +257,7 @@ def scrape_garanti():
         tables = pd.read_html(url)
         garanti_data = tables[0]
         
-        garanti_32_91 = garanti_data.iloc[2:5,1:].replace(",",".",regex=True).astype(float).values.max()
+        garanti_32_91 = garanti_data.iloc[1:5,1:].replace(",",".",regex=True).astype(float).values.max()
         garanti_92 = garanti_data.iloc[5,1:].replace(",",".",regex=True).astype(float).values.max()
         
         return garanti_32_91, garanti_92, None
