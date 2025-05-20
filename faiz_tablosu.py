@@ -82,7 +82,7 @@ def scrape_isbankasi():
                          headers={"User-Agent": "Mozilla/5.0"})
         raw_str = r.json().get("Data", [None])[0]
         parts = raw_str.split("#") if raw_str else []
-        val = clean_number(parts[2]) if len(parts) > 2 else None
+        val = clean_number(parts[1]) if len(parts) > 2 else None
 
         r2 = requests.get("https://www.isbank.com.tr/_vti_bin/DV.Isbank/PriceAndRate/PriceAndRateService.svc/GetDailyDepositRate?Lang=tr&ChannelType=ISCEP&CurrencyCode=TRY")
         d_val = max([float(x) for x in r2.json().get("Data", {}).get("RateValue", [])])
