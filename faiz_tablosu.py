@@ -203,13 +203,26 @@ def scrape_akbank():
             'faizTuru': '0',
             'kanalKodu': '8'
         }
+
         response = requests.post(url, headers=headers, json=payload, timeout=10)
         data = response.json()
-        
+
         rates_raw = data.get("d", {}).get("Data", {}).get("ServiceData", {}).get("GrossRates", [])
-        akbank_32_91_max = max([float(str(x).replace(",",".")) for x in rates_raw[2:4]]) if len(rates_raw) > 2 else None
-        akbank_92_max = max([float(str(x).replace(",",".")) for x in rates_raw[5][1:6]]) if len(rates_raw) > 2 else None
-        
+        all_rates_32_91 = []
+        for i in [2, 3, 4]:
+            if i < len(rates_raw):
+                rate_list = rates_raw[i].get("Rates", [])
+                for r in rate_list:
+                    try:
+                        all_rates_32_91.append(float(str(r).replace(",", ".")))
+                    except:
+                        continue
+        akbank_32_91_max = max(all_rates_32_91) if all_rates_32_91 else None
+        akbank_92_max = None
+        if len(rates_raw) > 5:
+            rate_list_92 = rates_raw[5].get("Rates", [])
+            akbank_92_max = max([float(str(r).replace(",", ".")) for r in rate_list_92])
+
         daily_url = "https://www.akbank.com/mevduat-yatirim/mevduat/hesaplar/serbest-plus-hesap"
         daily_page = requests.get(daily_url, timeout=10)
         daily_soup = BeautifulSoup(daily_page.content, 'html.parser')
