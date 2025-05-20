@@ -9,6 +9,23 @@ def clean_number(text):
         return float(text.replace("%","").replace(",","."))
     except:
         return None
+def get_faiz_tablosu():
+    odea_32_91_max = odea_92_max = odea_gunluk_faiz = None
+    fiba_32_91_max = fiba_92_max = fiba_gunluk_faiz = None
+    alternatif_32_91_max = alternatif_92_max = alternatif_gunluk_faiz = None
+    qnb_32_91_max = qnb_92_max = qnb_gunluk_faiz = None
+    burgan_32_91_max = burgan_92_max = burgan_gunluk_faiz = None
+    akbank_32_91_max = akbank_92_max = akbank_gunluk_faiz = None
+    denizbank_31_92_max = denizbank_92_max = None
+    isbankasi_32_91_max = isbankasi_92_max = isbankasi_gunluk_faiz = None
+    vakifbank_32_91_max = vakifbank_92_max = vakifbank_gunluk_faiz = None
+    garanti_32_91_max = garanti_92_max = None
+    hsbc_gunluk_faiz = None
+    anadolubank_gunluk_faiz = None
+    ing_gunluk_faiz = None
+    turkiyefinans_gunluk_faiz = None
+
+
 
 def scrape_odeabank():
     try:
@@ -308,30 +325,31 @@ def create_faiz_tablosu():
     _, _, ing_daily = scrape_ing()
     _, _, turk_daily = scrape_turkiyefinans()
     
-    faiz_tablosu = pd.DataFrame({
+faiz_tablosu = pd.DataFrame({
         "Banka": [
             "Odeabank", "Fibabank", "AlternatifBank", "QNB", "Burganbank",
             "Akbank", "Denizbank", "ZiraatBankasi", "İşbankasi", "Vakifbank",
             "GarantiBbva", "ING", "HSBC", "TurkiyeFinans", "AnadoluBank"
         ],
         "32-91 günlük max oran": [
-            odea_32_91, fiba_32_91, alt_32_91, qnb_32_91, burgan_32_91,
-            akbank_32_91, deniz_32_91, None, isbank_32_91, vakif_32_91,
-            garanti_32_91, None, None, None, None
+            odea_32_91_max, fiba_32_91_max, alternatif_32_91_max, qnb_32_91_max, burgan_32_91_max,
+            akbank_32_91_max, denizbank_31_92_max, None, isbankasi_32_91_max, vakifbank_32_91_max,
+            garanti_32_91_max, None, None, None, None
         ],
         "92 günlük max oran": [
-            odea_92, fiba_92, alt_92, qnb_92, burgan_92,
-            akbank_92, deniz_92, None, isbank_92, vakif_92,
-            garanti_92, None, None, None, None
+            odea_92_max, fiba_92_max, alternatif_92_max, qnb_92_max, burgan_92_max,
+            akbank_92_max, denizbank_92_max, None, isbankasi_92_max, vakifbank_92_max,
+            garanti_92_max, None, None, None, None
         ],
         "günlük faiz": [
-            odea_daily, fiba_daily, alt_daily, qnb_daily, burgan_daily,
-            akbank_daily, None, None, isbank_daily, vakif_daily,
-            None, ing_daily, hsbc_daily, turk_daily, anadolu_daily
+            odea_gunluk_faiz, fiba_gunluk_faiz, alternatif_gunluk_faiz, qnb_gunluk_faiz, burgan_gunluk_faiz,
+            akbank_gunluk_faiz, None, None, isbankasi_gunluk_faiz, vakifbank_gunluk_faiz,
+            None, ing_gunluk_faiz, hsbc_gunluk_faiz, turkiyefinans_gunluk_faiz, anadolubank_gunluk_faiz
         ]
     })
     
     return faiz_tablosu
+
 
 if __name__ == "__main__":
     df = create_faiz_tablosu()
