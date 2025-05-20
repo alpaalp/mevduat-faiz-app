@@ -207,8 +207,8 @@ def scrape_akbank():
         data = response.json()
         
         rates_raw = data.get("d", {}).get("Data", {}).get("ServiceData", {}).get("GrossRates", [])
-        akbank_32_91_max = max([float(str(x).replace(",",".")) for x in rates_raw[3:5]]) if len(rates_raw) > 5 else None
-        akbank_92_max = max([float(str(x).replace(",",".")) for x in rates_raw[5][1:6]]) if len(rates_raw) > 5 else None
+        akbank_32_91_max = max([float(str(x).replace(",",".")) for x in rates_raw[2:4]]) if len(rates_raw) > 2 else None
+        akbank_92_max = max([float(str(x).replace(",",".")) for x in rates_raw[5][1:6]]) if len(rates_raw) > 2 else None
         
         daily_url = "https://www.akbank.com/mevduat-yatirim/mevduat/hesaplar/serbest-plus-hesap"
         daily_page = requests.get(daily_url, timeout=10)
