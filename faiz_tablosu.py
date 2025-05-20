@@ -46,12 +46,12 @@ def scrape_burganbank():
         
         burgan_32_91_max = burgan_92_max = None
         
-          try_row = next((item for item in data if item.get('currencyCode') == 'TRY'), None)
+        try_row = next((item for item in data if item.get('currencyCode') == 'TRY'), None)
         if try_row and try_row.get('maturityRates'):
             maturities = try_row['maturityRates'][0]
             rates = maturities.get('rates', [])
-                
-                  if len(rates) > 3:
+            
+            if len(rates) > 3:
                 rate_data = rates[3]
                 if isinstance(rate_data, list):
                     burgan_32_91_max = max(float(item.get('rate', 0)) for item in rate_data)
@@ -59,8 +59,8 @@ def scrape_burganbank():
                     burgan_32_91_max = float(rate_data.get('rate', 0))
                 elif isinstance(rate_data, (int, float, str)):
                     burgan_32_91_max = float(rate_data)
-                
-               if len(rates) > 4:
+            
+            if len(rates) > 4:
                 rate_data = rates[4]
                 if isinstance(rate_data, list):
                     burgan_92_max = max(float(item.get('rate', 0)) for item in rate_data)
@@ -68,8 +68,6 @@ def scrape_burganbank():
                     burgan_92_max = float(rate_data.get('rate', 0))
                 elif isinstance(rate_data, (int, float, str)):
                     burgan_92_max = float(rate_data)
-                
-                break
 
         daily_url = "https://on.com.tr/hesaplar/on-plus"
         daily_page = requests.get(daily_url, timeout=10)
@@ -78,7 +76,8 @@ def scrape_burganbank():
         burgan_daily = float(re.search(r"\d{2,3}(?:\.\d+)?", daily_text).group())
         
         return burgan_32_91_max, burgan_92_max, burgan_daily
-    except:
+    except Exception as e:
+        print(f"Error in scrape_burganbank: {e}")
         return None, None, None
 
 def scrape_fibabanka():
