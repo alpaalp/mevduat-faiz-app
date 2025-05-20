@@ -104,21 +104,47 @@ def scrape_fibabanka():
 
 def scrape_alternatifbank():
     try:
-        url = "https://www.alternatifbank.com.tr/bilgi-merkezi/faiz-oranlari#mevduat"
-        tables = pd.read_html(url)
-        alt_data = tables[20]
+        url = "https://www.alternatifbank.com.tr/bilgi-merkezi/faiz-oranlari"
+        headers = {"User-Agent": "Mozilla/5.0"}
         
-        alt_32_91_max = alt_data.iloc[5:9].select_dtypes(include="number").values.flatten().max()
-        alt_92_max = alt_data.iloc[9].select_dtypes(include="number").values.flatten().max()
+        response = requests.get(url, headers=headers, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+        tables = soup.find_all("table")
+
+        if len(tables) < 21:
+            return None, None, None
+
+        target_table = tables[20]
+        rows = target_table.find_all("tr")
+        
+        alternatifbank_32_91_max = None
+        alternatifbank_92_max = None
+        
+        for row in rows:
+            cells = [cell.get_text(strip=True) for cell in row.find_all(["th", "td"])]
+            if not cells:
+                continue
+                
+            if cells[0] in ['32-44', '45-60', '61-75', '76-91']:
+                rates = [float(cell.replace(',', '.')) for cell in cells[1:] if cell.replace('.','').isdigit()]
+                current_max = max(rates) if rates else 0
+                if alternatifbank_32_91_max is None or current_max > alternatifbank_32_91_max:
+                    alternatifbank_32_91_max = current_max
+                    
+            elif cells[0] == '92-120':
+                rates = [float(cell.replace(',', '.')) for cell in cells[1:] if cell.replace('.','').isdigit()]
+                alternatifbank_92_max = max(rates) if rates else 0
         
         daily_url = "https://www.alternatifbank.com.tr/bireysel/mevduat/vadeli-mevduat/vov-hesap#faizorani"
-        daily_page = requests.get(daily_url, timeout=10)
-        daily_soup = BeautifulSoup(daily_page.content, 'html.parser')
+        daily_response = requests.get(daily_url, headers=headers, timeout=10)
+        daily_soup = BeautifulSoup(daily_response.text, "html.parser")
         daily_text = daily_soup.select_one(".rate").get_text()
-        alt_daily = float(re.search(r"\d{2,3}(?:\.\d+)?", daily_text).group())
-        
-        return alt_32_91_max, alt_92_max, alt_daily
-    except:
+        alternatifbank_daily = float(re.search(r"\d{2,3}(?:\.\d+)?", daily_text).group())
+
+        return alternatifbank_32_91_max, alternatifbank_92_max, alternatifbank_daily
+
+    except Exception as e:
+        print(f"Error scraping Alternatifbank: {e}")
         return None, None, None
 
 def scrape_qnb():
