@@ -261,7 +261,7 @@ def scrape_vakifbank():
     try:
         url = "https://www.vakifbank.com.tr/tr/bireysel/hesaplar/vadeli-hesaplar/tanisma-faizi-kampanyasi-hesabi"
         tables = pd.read_html(url)
-        vakif_data = tables[1]
+        vakif_data = tables[0]
         
         vakif_32_91 = vakif_data.iloc[0:2,2].astype(str).str.replace("%","").str.replace(",",".").astype(float).max()
         vakif_92 = clean_number(vakif_data.iloc[2,2])
