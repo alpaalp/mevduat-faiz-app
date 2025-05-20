@@ -90,9 +90,9 @@ def scrape_fibabanka():
         tables = pd.read_html(url)
         
         fiba_data = tables[1]
-        fiba_32_91 = fiba_data.iloc[3].iloc[1:].astype(str).str.replace(",",".").astype(float)
+        fiba_32_91 = fiba_data.iloc[2].iloc[1:].astype(str).str.replace(",",".").astype(float)
         fiba_32_91_max = fiba_32_91.max()
-        fiba_92 = fiba_data.iloc[4].iloc[1:].astype(str).str.replace(",",".").astype(float)
+        fiba_92 = fiba_data.iloc[3].iloc[1:].astype(str).str.replace(",",".").astype(float)
         fiba_92_max = fiba_92.max()
         
         fiba_daily_data = tables[0]
