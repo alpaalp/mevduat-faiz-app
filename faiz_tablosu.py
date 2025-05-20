@@ -47,10 +47,14 @@ def scrape_burganbank():
         burgan_32_91_max = burgan_92_max = None
         
         try_row = next((item for item in data if item.get('currencyCode') == 'TRY'), None)
-        
         if try_row and try_row.get('maturityRates'):
-            if len(try_row['maturityRates']) > 3:
-                rate_data = try_row['maturityRates'][3]
+            maturities = try_row['maturityRates'][3]
+            maturities_1 = try_row['maturityRates'][4]
+            rates = maturities.get('rates', [])
+            rates_1 = maturities_1.get('rates', [])
+
+            if len(rates) > 0:
+                rate_data = rates[1]
                 if isinstance(rate_data, list):
                     burgan_32_91_max = max(float(item.get('rate', 0)) for item in rate_data)
                 elif isinstance(rate_data, dict):
@@ -58,15 +62,16 @@ def scrape_burganbank():
                 elif isinstance(rate_data, (int, float, str)):
                     burgan_32_91_max = float(rate_data)
             
-            if len(try_row['maturityRates']) > 4:
-                rate_data = try_row['maturityRates'][4]
+            if len(rates_1) > 0:
+                rate_data = rates_1[1]
                 if isinstance(rate_data, list):
                     burgan_92_max = max(float(item.get('rate', 0)) for item in rate_data)
                 elif isinstance(rate_data, dict):
                     burgan_92_max = float(rate_data.get('rate', 0))
                 elif isinstance(rate_data, (int, float, str)):
                     burgan_92_max = float(rate_data)
-
+        
+      
         daily_url = "https://on.com.tr/hesaplar/on-plus"
         daily_page = requests.get(daily_url, timeout=10)
         daily_soup = BeautifulSoup(daily_page.content, 'html.parser')
@@ -76,7 +81,7 @@ def scrape_burganbank():
         return burgan_32_91_max, burgan_92_max, burgan_daily
     
     except Exception as e:
-        print(f"Error in scrape_burganbank: {e}")
+        print(f"Error scraping Burganbank: {e}")
         return None, None, None
 
 def scrape_fibabanka():
