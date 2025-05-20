@@ -374,12 +374,12 @@ def get_faiz_tablosu():
         ],
         "32-91 günlük max oran": [
             odea_32_91, fiba_32_91, alt_32_91, qnb_32_91, burgan_32_91,
-            akbank_32_91, deniz_32_91, None, isbank_32_91, vakif_32_91,
+            akbank_32_91, deniz_32_91, 42, isbank_32_91, vakif_32_91,
             garanti_32_91, None, None, None, None
         ],
         "92 günlük max oran": [
             odea_92, fiba_92, alt_92, qnb_92, burgan_92,
-            akbank_92, deniz_92, None, isbank_92, vakif_92,
+            akbank_92, deniz_92, 40, isbank_92, vakif_92,
             garanti_92, None, None, None, None
         ],
         "günlük faiz": [
