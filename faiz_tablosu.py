@@ -1,3 +1,4 @@
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -14,6 +15,24 @@ def clean_number(text):
 def safe_max(values):
     values = [v for v in values if isinstance(v, (int, float)) and v > 0]
     return max(values) if values else None
+
+
+def scrape_odeabank():
+    try:
+        soup = BeautifulSoup(requests.get("https://www.odeabank.com.tr/kampanyalar/odeada-tl-mevduatiniza-5000ye-varan-faiz-orani-firsati-23779").content, "lxml")
+        texts = [n.get_text(strip=True) for n in soup.select(".text-center")]
+        vals_32_91 = [clean_number(texts[i]) for i in (3, 5, 7) if i < len(texts)]
+        max_32_91 = safe_max(vals_32_91)
+        max_92 = clean_number(texts[9]) if len(texts) > 9 else None
+
+        soup2 = BeautifulSoup(requests.get("https://www.odeabank.com.tr/bireysel/mevduat/oksijen-hesap").content, "lxml")
+        oks_vals = [clean_number(n.get_text()) for n in soup2.select(".interest-rates__item-rate")]
+        daily = safe_max(oks_vals)
+
+        return max_32_91, max_92, daily
+    except:
+        return None, None, None
+
 
 def scrape_fibabanka():
     try:
@@ -89,7 +108,7 @@ def scrape_qnb():
         soup = BeautifulSoup(requests.get("https://www.qnb.com.tr/e-vadeli-mevduat-urunleri").content, "lxml")
         rate = clean_number(re.findall(r"%\d+[,\.]?\d*", soup.select_one("#sbt1").text)[0])
         daily_tables = pd.read_html("https://www.qnb.com.tr/kazandiran-gunluk-hesap")
-        d_val = safe_max([clean_number(str(x)) for x in daily_tables[1].iloc[0:3,4]])
+        d_val = safe_max([clean_number(str(x)) for x in daily_tables[1].iloc[1:3,4]])
         return rate, rate, d_val
     except:
         return None, None, None
@@ -140,7 +159,8 @@ def scrape_turkiyefinans():
 
 def get_faiz_tablosu():
     banks = [
-        ("Fibabank", scrape_fibabanka),
+("Odeabank", scrape_odeabank),
+                ("Fibabank", scrape_fibabanka),
         ("Burganbank", scrape_burganbank),
         ("Denizbank", scrape_denizbank),
         ("İşbankası", scrape_isbankasi),
