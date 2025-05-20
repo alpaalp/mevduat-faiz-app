@@ -42,33 +42,51 @@ def scrape_burganbank():
             'Content-Type': 'application/json'
         }
         response = requests.post(url, headers=headers, timeout=10)
-        response.raise_for_status()
         data = response.json()
-
-        try_row = next((row for row in data if row.get("currencyCode") == "TRY"), None)
-        if not try_row:
-            return None, None, None
-
-        rates_list = try_row.get("maturityRates", [])[0].get("rates", [])
-        burgan_32_91_max = None
-        burgan_92_max = None
-
-        if len(rates_list) > 3:
-            df_32 = pd.DataFrame(rates_list[3])
-            burgan_32_91_max = df_32["rate"].max()
-
-        if len(rates_list) > 4:
-            df_92 = pd.DataFrame(rates_list[4])
-            burgan_92_max = df_92["rate"].max()
-
+        
+        burgan_32_91_max = burgan_92_max = None
+        for row in data:
+            if row.get("currencyCode") == "TRY":
+                rates = row.get("maturityRates", [])[0].get("rates", [])
+                if len(rates) > 3:
+                    seg = rates[3]
+                    vals = []
+                    if isinstance(seg, list):
+                        for item in seg:
+                            if isinstance(item, dict):
+                                vals.append(item.get("rate", 0))
+                            elif isinstance(item, (int, float)):
+                                vals.append(item)
+                    elif isinstance(seg, dict):
+                        vals.append(seg.get("rate", 0))
+                    elif isinstance(seg, (int, float)):
+                        vals.append(seg)
+                    if vals:
+                        burgan_32_91_max = max(vals)
+                if len(rates) > 4:
+                    seg2 = rates[4]
+                    vals2 = []
+                    if isinstance(seg2, list):
+                        for item in seg2:
+                            if isinstance(item, dict):
+                                vals2.append(item.get("rate", 0))
+                            elif isinstance(item, (int, float)):
+                                vals2.append(item)
+                    elif isinstance(seg2, dict):
+                        vals2.append(seg2.get("rate", 0))
+                    elif isinstance(seg2, (int, float)):
+                        vals2.append(seg2)
+                    if vals2:
+                        burgan_92_max = max(vals2)
+                break
+        
         daily_url = "https://on.com.tr/hesaplar/on-plus"
         daily_page = requests.get(daily_url, timeout=10)
         daily_soup = BeautifulSoup(daily_page.content, 'html.parser')
-        daily_text = daily_soup.select_one(".with-seperator").get_text()
+        daily_text = daily_soup.select(".with-seperator")[0].get_text()
         burgan_daily = float(re.search(r"\d{2,3}(?:\.\d+)?", daily_text).group())
-
+        
         return burgan_32_91_max, burgan_92_max, burgan_daily
-
     except:
         return None, None, None
 
