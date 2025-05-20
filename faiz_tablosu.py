@@ -133,7 +133,7 @@ def scrape_turkiyefinans():
     val = df.iloc[0:13,4].astype(str).str.replace(r"[^0-9,]","",regex=True).str.replace(",",".").astype(float).max()
     return None, None, val
 
-def create_faiz_tablosu():
+def get_faiz_tablosu():
     banks = [
         ("Odeabank", *scrape_odeabank()),
         ("Fibabanka", *scrape_fibabanka()),
@@ -154,5 +154,5 @@ def create_faiz_tablosu():
     return pd.DataFrame(banks, columns=["Banka","32-91 günlük max oran","92 günlük max oran","günlük faiz"])
 
 if __name__=="__main__":
-    df = create_faiz_tablosu()
+    df = get_faiz_tablosu()
     print(df)
