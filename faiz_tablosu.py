@@ -112,15 +112,8 @@ def scrape_fibabanka():
         )
         fiba_92_max = fiba_92.max()
 
-        fiba_daily_data = tables[0]
-        fiba_daily = (
-            fiba_daily_data.iloc[0:8, 5]
-            .astype(str)
-            .str.replace("%", "", regex=False)
-            .str.replace(",", ".", regex=False)
-            .astype(float)
-            .max() / 100
-        )
+      fiba_daily_data = tables[0]
+        fiba_daily = fiba_daily_data.iloc[0:8,5].astype(str).str.replace("%","").str.replace(",",".").astype(float).max()
 
         return fiba_32_91_max, fiba_92_max, fiba_daily
     except Exception as e:
